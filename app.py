@@ -38,7 +38,10 @@ def fetch(url, offset):
     elif response.status_code == HTTP_RESPONSE_TOO_MANY_REQUESTS:
         # TODO: Handle this case
         # Maybe throw/raise exception so that empty result doesn't get cached
-        print("Response State Code {response.status_code}: Too Many Requests")
+        print("Response: Too Many Requests")
+    else:
+        print(f"response.state_code {response.status_code}")
+
     return object
 
 
