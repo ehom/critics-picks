@@ -20,12 +20,25 @@ LAST_TRACK = "\u23ee\ufe0f"
 NEXT_TRACK = "\u23ed\ufe0f"
 
 
+LEFT_POINTING_TRIANGLE  = "\u25c0"
+RIGHT_POINTING_TRIANGLE = "\u25b6"
+
+BATCH_SIZE = 20
+
+HTTP_RESPONSE_TOO_MANY_REQUESTS = 429
+
+
 @st.cache_data(show_spinner="Fetching data from API...")
 def fetch(url, offset):
+    print("fetching, offset:", offset)
     object = {}
     response = requests.get(url + f"&offset={offset}")
     if response.status_code == 200:
         object = response.json()
+    elif response.status_code == HTTP_RESPONSE_TOO_MANY_REQUESTS:
+        # TODO: Handle this case
+        # Maybe throw/raise exception so that empty result doesn't get cached
+        print("Response State Code {response.status_code}: Too Many Requests")
     return object
 
 
@@ -43,14 +56,14 @@ def show_controls(show_header=True):
             st.header(f"{APP_NAME} {MOVIE_CAMERA}")
 
     with mid_col:
-        if st.button(LAST_TRACK):
-            if st.session_state['offset'] >= 20:
-                st.session_state["offset"] -= 20
+        if st.button(LEFT_POINTING_TRIANGLE):
+            if st.session_state['offset'] >= BATCH_SIZE:
+                st.session_state["offset"] -= BATCH_SIZE
                 st.experimental_rerun()
     with right_col:
-        if st.button(NEXT_TRACK):
+        if st.button(RIGHT_POINTING_TRIANGLE):
             if st.session_state['has_more']:
-                st.session_state["offset"] += 20
+                st.session_state["offset"] += BATCH_SIZE
                 st.experimental_rerun()
 
 
@@ -65,6 +78,8 @@ def show_picks(object):
         with left_col:
             if 'multimedia' in article and 'src' in article['multimedia']:
                 st.image(get_image_url(article))
+            else:
+                print("missing image!!!")
         with right_col:
             st.write(iso_to_how_long_ago(article['publication_date']))
             st.subheader(article['display_title'])
@@ -119,6 +134,7 @@ def main():
         st.session_state["offset"] = 0
         st.session_state["has_more"] = True
 
+    print("offset:", st.session_state['offset'])
     object = fetch(NYT_URL, st.session_state['offset'])
     # TODO: check for "status" field in object?
     st.session_state["has_more"] = object.get('has_more', False)
