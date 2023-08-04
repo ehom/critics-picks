@@ -8,26 +8,20 @@ import requests
 from pprint import PrettyPrinter
 pp = PrettyPrinter(indent=4, width=80)
 
-
 API_KEY = os.environ['NYT_API_KEY']
 
 NYT_URL = f"https://api.nytimes.com/svc/movies/v2/reviews/picks.json?api-key={API_KEY}"
+
+APP_NAME = "Critics\u2019 Picks"
 ATTRIBUTION = "[Data provided by The New York Times](https://developer.nytimes.com)"
 
-CLAPPING = "\U0001F44F"
 MOVIE_CAMERA = "\U0001F3A5"
 LAST_TRACK = "\u23ee\ufe0f"
 NEXT_TRACK = "\u23ed\ufe0f"
-APP_NAME = "Critics\u2019 Picks"
-
-menu_items = {
-  "About": "Data provided by The New York Times"
-}
 
 
-@st.cache_data(show_spinner="")
+@st.cache_data(show_spinner="Fetching data from API...")
 def fetch(url, offset):
-    print("fetch...")
     object = {}
     response = requests.get(url + f"&offset={offset}")
     if response.status_code == 200:
@@ -116,7 +110,10 @@ def view(object):
 
 
 def main():
-    st.set_page_config(APP_NAME, layout="centered", page_icon=MOVIE_CAMERA, menu_items=menu_items)
+    st.set_page_config(APP_NAME, layout="centered", page_icon=MOVIE_CAMERA,
+                       menu_items={
+                           "About": "Data provided by The New York Times"
+                       })
 
     if "offset" not in st.session_state:
         st.session_state["offset"] = 0
