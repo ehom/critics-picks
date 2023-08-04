@@ -25,7 +25,7 @@ menu_items = {
 }
 
 
-@st.cache_data
+@st.cache_data(show_spinner="")
 def fetch(url, offset):
     print("fetch...")
     object = {}
@@ -86,7 +86,7 @@ def show_images(object):
 
     list_of_articles = object['results']
 
-    if list_of_articles == None:
+    if list_of_articles is None:
         print("can't find articles")
         return
 
@@ -124,6 +124,7 @@ def main():
     st.session_state["has_more"] = object.get('has_more', False)
 
     view(object)
+
 
 if __name__ == "__main__":
     main()
