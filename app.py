@@ -68,16 +68,13 @@ def show_picks(object):
 
     for article in object.get('results', []):
         left_col, mid_col, right_col = st.columns([2, 1, 4])
-        # pp.pprint(object)
         with left_col:
             if 'multimedia' in article and 'src' in article['multimedia']:
-                # st.image(article['multimedia']['src'])
                 st.image(get_image_url(article))
         with right_col:
-            text = f"**{article['display_title']}** &mdash; {article['summary_short']}"
+            st.write(iso_to_how_long_ago(article['publication_date']))
             st.subheader(article['display_title'])
             st.write(article['summary_short'])
-            st.write(iso_to_how_long_ago(article['publication_date']))
         st.divider()
 
 
@@ -86,9 +83,6 @@ def show_images(object):
         print("No images")
         st.session_state["has_more"] = False
         return
-
-    # print("show images")
-    # pp.pprint(object)
 
     list_of_articles = object['results']
 
