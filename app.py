@@ -75,6 +75,7 @@ def show_picks(object):
             st.write(iso_to_how_long_ago(article['publication_date']))
             st.subheader(article['display_title'])
             st.write(article['summary_short'])
+
             if len(article['mpaa_rating']):
                 annotated_text((article['mpaa_rating'], "mpaa rating"))
         st.divider()
