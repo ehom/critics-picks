@@ -15,7 +15,7 @@ NYT_URL = f"https://api.nytimes.com/svc/movies/v2/reviews/picks.json?api-key={AP
 ATTRIBUTION = "[Data provided by The New York Times](https://developer.nytimes.com)"
 
 CLAPPING = "\U0001F44F"
-MOVIE = "\U0001F3A5"
+MOVIE_CAMERA = "\U0001F3A5"
 LAST_TRACK = "\u23ee\ufe0f"
 NEXT_TRACK = "\u23ed\ufe0f"
 APP_NAME = "Critics\u2019 Picks"
@@ -46,7 +46,7 @@ def show_controls(show_header=True):
 
     with left_col:
         if show_header:
-            st.header(f"{APP_NAME} {MOVIE}")
+            st.header(f"{APP_NAME} {MOVIE_CAMERA}")
 
     with mid_col:
         if st.button(LAST_TRACK):
@@ -119,11 +119,12 @@ def view(object):
 
 
 def main():
+    st.set_page_config(APP_NAME, layout="centered", page_icon=MOVIE_CAMERA, menu_items=menu_items)
+
     if "offset" not in st.session_state:
         st.session_state["offset"] = 0
         st.session_state["has_more"] = True
 
-    st.set_page_config(APP_NAME, layout="wide", page_icon="\U0001F3A5", menu_items=menu_items)
     object = fetch(NYT_URL, st.session_state['offset'])
     # TODO: check for "status" field in object?
     st.session_state["has_more"] = object.get('has_more', False)
