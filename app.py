@@ -33,14 +33,18 @@ def fetch(url, offset):
     print("fetching, offset:", offset)
     object = {}
     response = requests.get(url + f"&offset={offset}")
+
+    # If not status code == 200
+    # Raise an exception
+
     if response.status_code == 200:
         object = response.json()
     elif response.status_code == HTTP_RESPONSE_TOO_MANY_REQUESTS:
-        # TODO: Handle this case
-        # Maybe throw/raise exception so that empty result doesn't get cached
         print("Response: Too Many Requests")
+        raise Exception("Request Failed")
     else:
         print(f"response.state_code {response.status_code}")
+        raise Exception("Request Failed")
 
     return object
 
@@ -138,9 +142,15 @@ def main():
         st.session_state["has_more"] = True
 
     print("offset:", st.session_state['offset'])
-    object = fetch(NYT_URL, st.session_state['offset'])
-    # TODO: check for "status" field in object?
-    st.session_state["has_more"] = object.get('has_more', False)
+
+    try:
+        object = fetch(NYT_URL, st.session_state['offset'])
+        # TODO: check for "status" field in object?
+        st.session_state["has_more"] = object.get('has_more', False)
+    except Exception as e:
+        print(f"Exception caught: {e}")
+        st.session_state['offset'] = 0
+        object = fetch(NYT_URL, st.session_state['offset'])
 
     view(object)
 
