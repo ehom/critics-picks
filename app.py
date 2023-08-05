@@ -56,6 +56,13 @@ def get_image_url(article):
 
 
 def show_controls(show_header=True):
+    key_prev_page = "prev_page"
+    key_next_page = "next_page"
+
+    if show_header:
+        key_prev_page += "_header"
+        key_next_page += "_header"
+
     left_col, mid_col, right_col = st.columns([10, 1, 1])
 
     with left_col:
@@ -63,12 +70,12 @@ def show_controls(show_header=True):
             st.header(f"{APP_NAME} {MOVIE_CAMERA}")
 
     with mid_col:
-        if st.button(LEFT_POINTING_TRIANGLE):
+        if st.button(LEFT_POINTING_TRIANGLE, key=key_prev_page):
             if st.session_state['offset'] >= BATCH_SIZE:
                 st.session_state["offset"] -= BATCH_SIZE
                 st.experimental_rerun()
     with right_col:
-        if st.button(RIGHT_POINTING_TRIANGLE):
+        if st.button(RIGHT_POINTING_TRIANGLE, key=key_next_page):
             if st.session_state['has_more']:
                 st.session_state["offset"] += BATCH_SIZE
                 st.experimental_rerun()
@@ -128,6 +135,7 @@ def view(object):
     with tabs[1]:
         show_images(object)
 
+    show_controls(show_header=False)
     st.markdown(ATTRIBUTION)
 
 
