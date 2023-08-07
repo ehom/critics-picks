@@ -2,6 +2,9 @@ import streamlit as st
 from annotated_text import annotated_text
 from utils import iso_to_how_long_ago
 
+from urllib.parse import quote
+
+
 import os
 import requests
 
@@ -96,11 +99,16 @@ def show_picks(object):
                 print("missing image!!!")
         with right_col:
             st.write(iso_to_how_long_ago(article['publication_date']))
-            st.subheader(article['display_title'])
+
+            display_title = article['display_title']
+            encoded_display_title = quote(display_title)
+            st.markdown(f"### [{display_title}](https://www.imdb.com/find/?s=tt&q={encoded_display_title})")
+
             st.write(article['summary_short'])
 
             if len(article['mpaa_rating']):
                 annotated_text((article['mpaa_rating'], "mpaa rating"))
+
         st.divider()
 
 
